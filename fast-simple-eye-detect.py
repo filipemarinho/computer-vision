@@ -1,17 +1,25 @@
-#Simple program to detect eye center at close distance
+#Fast and Simple program to detect eye center at close distance
 
 import cv2
 import numpy as np
 import time
 
+#capture resolution
+resolution = [640, 480]
+
 #select video.
 cap = cv2.VideoCapture(0)
 
+#Reduce resolution to optimize speed
+cap.set(3, resolution[0])
+cap.set(3, resolution[1])
 
 mean_time = [] 
+
 while(True):
     
     start_time = time.time()
+    
     #read frame
     ret,frame = cap.read()
     
@@ -20,7 +28,6 @@ while(True):
         break
     
     #extract gray roi
-#     roi = frame[100:-100, 100, -100]
     roi = cv2.resize(frame, (640, 480), interpolation = cv2.INTER_AREA)
     rows, cols, _ = roi.shape
     gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
@@ -42,7 +49,7 @@ while(True):
 
 #     cv2.imshow("Threshold", threshold)
 #     cv2.imshow("gray roi", gray_roi)
-    cv2.imshow("Roi", roi)
+    cv2.imshow("ROI", roi)
 
     #if 'q' pressed quit
     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -55,6 +62,8 @@ while(True):
 cv2.destroyAllWindows()
 cap.release()
 cv2.destroyAllWindows()
+
+
 mean_time = np.mean(mean_time)
 print("Execution Time (s) : "+ str(mean_time) + " (normal ~0.21s)")
 print("Executions per second: " + str(1/mean_time))
